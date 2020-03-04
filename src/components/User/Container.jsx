@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
+import { getUsersSelect } from '../../selectors/user';
 import axios from 'axios';
 import User from './User'
 import * as userActions from '../../actions/user';
@@ -46,7 +47,7 @@ function Container({users, userActionCreators}) {
           </tr>
         </thead>
         <tbody>
-          { users.length && renderUsers() }
+          { users.length ? renderUsers() : <tr></tr> }
         </tbody>
       </table>
     </div>
@@ -54,9 +55,11 @@ function Container({users, userActionCreators}) {
 }
 
 // Redux Config
-const mapStateToProps = (state) => ({
-  users: state.user.users,
-});
+const mapStateToProps = (state) => {
+  return {
+    users: getUsersSelect(state),
+  }
+};
 
 const mapDispatchToProps = (dispatch) => ({
   userActionCreators: bindActionCreators(userActions, dispatch),
