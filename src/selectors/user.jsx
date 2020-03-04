@@ -1,5 +1,7 @@
-import { createSelector } from 'reselect'
+import memoize from "fast-memoize";
 
-const usersSelector = state => state.getIn(['user', 'users']).toJS();
+const usersSelector = state => {
+  return state.getIn(['user', 'users']).toJS();
+};
 
-export const getUsersSelect = createSelector(usersSelector, data => data);
+export const getUsersSelect = memoize(usersSelector);

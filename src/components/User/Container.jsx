@@ -9,6 +9,7 @@ import * as userActions from '../../actions/user';
 function Container({users, userActionCreators}) {
 
   const {fetchUsers} = userActionCreators;
+  const [keyword, setKeyword] = useState('');
 
   function renderUsers() {
     return users.map(user => <User key={user.id} userItem={user} />);
@@ -16,14 +17,14 @@ function Container({users, userActionCreators}) {
 
   useEffect(() => {
     async function fetchUserFromApi() {
-      const {data} = await axios.get('http://5d418c0475f67300146b3f63.mockapi.io/user');
+      const {data} = await axios.get(`http://5d418c0475f67300146b3f63.mockapi.io/user?search=${keyword}`);
 
       // actions push data to redux
       fetchUsers(data);
     }
 
     fetchUserFromApi();
-  }, []);
+  }, [fetchUsers, keyword]);
 
   return(
     <div className="container">
@@ -33,6 +34,7 @@ function Container({users, userActionCreators}) {
             type="text"
             className="form-control"
             placeholder="Search here..."
+            onChange={(e) => setKeyword(e.target.value)}
           />
         </div>
       </div>
