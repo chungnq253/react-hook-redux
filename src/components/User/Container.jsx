@@ -2,28 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
 import { getUsersSelect } from '../../selectors/user';
-import axios from 'axios';
 import User from './User'
 import * as userActions from '../../actions/user';
 
-function Container({users, userActionCreators}) {
+function Container({user, userActionCreators}) {
 
   const {fetchUsers} = userActionCreators;
   const [keyword, setKeyword] = useState('');
 
   function renderUsers() {
-    return users.map(user => <User key={user.id} userItem={user} />);
+    return user.users.map(user => <User key={user.id} userItem={user} />);
   }
 
   useEffect(() => {
-    async function fetchUserFromApi() {
-      const {data} = await axios.get(`http://5d418c0475f67300146b3f63.mockapi.io/user?search=${keyword}`);
-
-      // actions push data to redux
-      fetchUsers(data);
-    }
-
-    fetchUserFromApi();
+    fetchUsers(keyword);
   }, [fetchUsers, keyword]);
 
   return(
@@ -49,7 +41,13 @@ function Container({users, userActionCreators}) {
           </tr>
         </thead>
         <tbody>
-          { users.length ? renderUsers() : <tr></tr> }
+          { 
+            user.loading ? (
+              <tr className="text-center">
+                <h1>Loading...</h1>
+              </tr>
+            ) : renderUsers() 
+          }
         </tbody>
       </table>
     </div>
@@ -59,7 +57,7 @@ function Container({users, userActionCreators}) {
 // Redux Config
 const mapStateToProps = (state) => {
   return {
-    users: getUsersSelect(state),
+    user: getUsersSelect(state),
   }
 };
 
